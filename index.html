@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для моего Светлячка ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1b1b2f 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Звезды */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+            opacity: 0.5;
+            filter: blur(1px);
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.2; }
+            to { opacity: 0.8; }
+        }
+
+        /* Конверт */
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 220px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: appear 1.5s forwards 0.5s;
+        }
+
+        @keyframes appear {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 120px solid #ff4d6d;
+            top: 0;
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .body-env {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: absolute;
+            bottom: 0;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .letter {
+            position: absolute;
+            width: 90%;
+            height: 85%;
+            background: #fff0f5;
+            left: 5%;
+            top: 70%;
+            border-radius: 20px;
+            padding: 15px;
+            box-sizing: border-box;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+            color: #ff1f4b;
+            font-size: 1.1em;
+            z-index: 1; /* Чтобы письмо было поверх отгиба */
+        }
+
+        .letter h2 {
+            margin-top: 0;
+            font-size: 1.8em;
+            color: #e60073;
+        }
+
+        .letter p {
+            margin-bottom: 0.5em;
+        }
+
+        .open .flap {
+            transform: rotateX(175deg);
+        }
+
+        .open .letter {
+            opacity: 1;
+            transform: translateY(-90px); /* Поднимается выше, чтобы текст был виден */
+            top: 70%;
+        }
+
+        /* Контейнер для вопросов */
+        .questions-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            z-index: 10;
+            pointer-events: none; /* Изначально неактивен */
+        }
+
+        .questions-container.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto; /* Становится активным */
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 15px 25px;
+            border: 1px solid #555;
+            border-radius: 10px;
+            background: rgba(20, 20, 20, 0.7);
+            width: 70%;
+            max-width: 500px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            font-size: 1.1em;
+        }
+
+        .question h3 {
+            color: #ff4d6d;
+            margin-bottom: 10px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            position: relative;
+            height: 50px;
+            opacity: 0; /* Изначально скрыты */
+            transform: translateY(20px); /* Появляются снизу */
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 2; /* Чтобы кнопки были видимы */
+        }
+
+        button {
+            padding: 12px 25px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            font-weight: bold;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .yes {
+            background: #ff4d6d;
+            color: white;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 10px;
+        }
+
+        .no {
+            background: #ccc;
+            color: #333;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 10px;
+        }
+
+        /* Финал */
+        .final {
+            position: absolute;
+            text-align: center;
+            font-size: 2.2em;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 1s ease-out;
+            text-shadow: 0 0 10px #ff4d6d, 0 0 20px #ff1f4b, 0 0 30px #e60073;
+            line-height: 1.3;
+            z-index: 10; /* Поверх всего */
+        }
+
+        .showFinal {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* Сердца */
+        .heart {
+            position: absolute;
+            font-size: 18px;
+            animation: fall linear infinite;
+            opacity: 0.8;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            z-index: 100; /* Чтобы были видны */
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh); opacity: 0; }
+        }
+
+        /* Светлячки */
+        .firefly {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 0, 0.8);
+            border-radius: 50%;
+            filter: blur(4px);
+            opacity: 0;
+            animation: flicker var(--duration) infinite alternate ease-in-out;
+            z-index: -1; /* Под письмом, но поверх звезд */
+        }
+
+        @keyframes flicker {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-30px) scale(1.2); /* Легкое парение */
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="envelope" id="envelope">
+    <div class="flap"></div>
+    <div class="body-env"></div>
+    <div class="letter">
+        <h2>Моему Светлячку ✨</h2>
+        <p>Ты будешь моей валентинкой?</p>
+        <div class="buttons" id="envelopeButtons">
+            <button class="yes" onclick="event.stopPropagation(); acceptLove();">
+                Да! ❤️
+            </button>
+            <button class="no" id="noBtn" onclick="event.stopPropagation();">
+                Не уверена... 🤔
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Контейнер для вопросов -->
+<div class="questions-container" id="questionsContainer">
+    <div class="question">
+        <h3>Вопрос 1</h3>
+        <p>Что тебя больше всего радует?</p>
+    </div>
+    <div class="question">
+        <h3>Вопрос 2</h3>
+        <p>Какая мелодия ассоциируется у тебя со счастьем?</p>
+    </div>
+    <div class="question">
+        <h3>Вопрос 3</h3>
+        <p>Что самое важное в жизни?</p>
+    </div>
+</div>
+
+<div class="final" id="finalMessage">
+    Я так и знал(а) 😏💘<br>
+    Ты — моё счастье! ✨<br>
+    Ты делаешь мою жизнь ярче каждый день 💛<br>
+    Мне важно, что ты есть! ❤️
+</div>
+
+<script>
+    const envelope = document.getElementById("envelope");
+    const noBtn = document.getElementById("noBtn");
+    const finalMessage = document.getElementById("finalMessage");
+    const questionsContainer = document.getElementById("questionsContainer");
+    const envelopeButtons = document.getElementById("envelopeButtons");
+
+    // --- Генерация звезд ---
+    const numStars = 100;
+    const starsContainer = document.body;
+    for (let i = 0; i < numStars; i++) {
+        const star = document.createElement("div");
+        star.classList.add("star");
+        star.style.width = star.style.height = `${Math.random() * 3 + 1}px`;
+        star.style.top = `${Math.random() * 100}vh`;
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.animationDuration = `${1 + Math.random() * 3}s`;
+        star.style.animationDelay = `${Math.random() * 2}s`;
+        starsContainer.appendChild(star);
+    }
+
+    // --- Генерация светлячков ---
+    const numFireflies = 25; // Количество светлячков
+    const firefliesContainer = document.body; // Добавляем прямо в body, чтобы они летатили над звездами, но под конвертом
+
+    for (let i = 0; i < numFireflies; i++) {
+        const firefly = document.createElement('div');
+        firefly.classList.add('firefly');
+
+        // Случайный размер
+        const size = Math.random() * 15 + 5; // от 5px до 20px
+        firefly.style.width = firefly.style.height = `${size}px`;
+
+        // Случайная позиция
+        const pos = getRandomPosition(window.innerWidth, 0); // Появляются сверху
+        firefly.style.left = `${pos.x}px`;
+        firefly.style.top = `${pos.y}px`;
+
+        // Случайная продолжительность анимации
+        const duration = Math.random() * 3 + 2; // от 2s до 5s
+        firefly.style.setProperty('--duration', `${duration}s`);
+
+        // Случайная задержка анимации
+        firefly.style.animationDelay = `${Math.random() * 4}s`;
+
+        firefliesContainer.appendChild(firefly);
+    }
+
+    function getRandomPosition(maxX, startY) {
+        const x = Math.random() * maxX;
+        const y = (typeof startY === 'number' ? startY : Math.random() * window.innerHeight);
+        return { x, y };
+    }
+
+
+    // --- Функции для конверта и вопросов ---
+    function openEnvelope() {
+        envelope.classList.add("open");
+        // Показываем кнопки с небольшой задержкой
+        setTimeout(() => {
+            envelopeButtons.style.opacity = "1";
+            envelopeButtons.style.transform = "translateY(0)";
+        }, 800); // Должно соответствовать времени анимации открытия конверта
+
+        // Показываем вопросы после полного открытия конверта
+        setTimeout(() => {
+            questionsContainer.classList.add("visible");
+        }, 1200); // Чуть больше задержка, чтобы конверт "раскрылся"
+    }
+
+    function moveButton() {
+        const btn = noBtn;
+        const envelopeRect = envelope.getBoundingClientRect();
+        const buttonRect = btn.getBoundingClientRect();
+
+        // Ограничения для перемещения кнопки:
+        // Не ближе 20px к краям экрана
+        // Не ниже нижней границы конверта (чтобы она не "ныряла" под него)
+        const maxX = window.innerWidth - buttonRect.width - 20;
+        // Если конверт открыт, считаем нижнюю границу письма, иначе - закрытого конверта
+        const envelopeBottom = envelope.classList.contains("open")
+            ? envelopeRect.bottom - 90 // Примерная нижняя граница письма
+            : envelopeRect.top + envelopeRect.height - 10; // Примерно нижняя часть конверта
+
+        const maxY = envelopeBottom - buttonRect.height - 20;
+
+        let x = Math.random() * maxX;
+        let y = Math.random() * maxY;
+
+        // Проверяем, чтобы кнопка не оказалась слишком близко к "Да"
+        const yesBtnRect = envelope.querySelector(".yes").getBoundingClientRect();
+        if (Math.abs(x - yesBtnRect.left) < 100 && Math.abs(y - yesBtnRect.top) < 100) {
+            // Можно добавить логику перегенерации или просто отодвинуть
+            x = Math.random() * maxX; // Попробуем сгенерировать заново
+            y = Math.random() * maxY;
+        }
+
+
+        btn.style.position = "fixed";
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
+        btn.style.transform = "translateX(-50%)"; // Центрирование
+    }
+
+    if (noBtn && envelope) {
+        noBtn.addEventListener("mouseenter", moveButton);
+        noBtn.addEventListener("touchstart", moveButton, { passive: true });
+    }
+
+    if (envelope) {
+        envelope.addEventListener("click", openEnvelope);
+    }
+
+    function acceptLove() {
+        envelope.style.opacity = "0";
+        envelope.style.transform = "translateY(-50px)";
+        envelope.style.pointerEvents = "none"; // Блокируем клики по конверту
+
+        questionsContainer.classList.remove("visible"); // Скрываем вопросы
+
+        setTimeout(() => {
+            finalMessage.classList.add("showFinal");
+            burstHearts();
+        }, 500);
+    }
+
+    // --- Взрыв сердечек ---
+    function burstHearts() {
+        let heartsCreated = 0;
+        const maxHearts = 60; // Количество создаваемых сердечек
+        const heartElements = []; // Массив для хранения объектов сердечек
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+
+            // Случайный цвет (красных оттенков)
+            const red = Math.floor(Math.random() * 100) + 155; // от 155 до 255
+            const blueGreen = Math.floor(Math.random() * 100); // от 0 до 99
+            heart.style.color = `rgb(${red}, ${blueGreen}, ${blueGreen})`;
+
+            // Случайный размер
+            const size = Math.random() * 15 + 10; // от 10px до 25px
+            heart.style.fontSize = `${size}px`;
+
+            // Случайная позиция
+            const startX = Math.random() * window.innerWidth;
+            heart.style.left = `${startX}px`;
+            heart.style.top = '0px'; // Начинаем сверху
+
+            // Случайная продолжительность анимации падения
+            const fallDuration = Math.random() * 3 + 2; // от 2s до 5s
+            heart.style.animationDuration = `${fallDuration}s`;
+
+            // Случайная задержка анимации
+            const delay = Math.random() * 1.5; // от 0 до 1.5s
+            heart.style.animationDelay = `${delay}s`;
+
+            document.body.appendChild(heart);
+            heartElements.push(heart); // Добавляем в массив
+            heartsCreated++;
+
+            if (heartsCreated < maxHearts) {
+                // Создаем следующее сердечко через короткий промежуток времени
+                setTimeout(createHeart, Math.random() * 100 + 50); // Интервал 50-150ms
+            }
+        }
+
+        createHeart(); // Запускаем создание первого сердечка
+    }
+</script>
+</html>
